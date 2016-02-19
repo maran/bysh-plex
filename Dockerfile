@@ -8,7 +8,7 @@ ENV LC_ALL C.UTF-8
 ENV LANGUAGE en_US.UTF-8
 
 RUN apt-get -q update && \
-    apt-get install -qy --force-yes curl && \
+    apt-get install -qy --force-yes curl sudo && \
     echo "deb http://shell.ninthgate.se/packages/debian wheezy main" > /etc/apt/sources.list.d/plexmediaserver.list && \
     curl http://shell.ninthgate.se/packages/shell-ninthgate-se-keyring.key | apt-key add - && \
     apt-get -q update && \
