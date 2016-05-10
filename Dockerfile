@@ -10,7 +10,7 @@ ENV LANGUAGE en_US.UTF-8
 RUN apt-get -q update && \
     apt-get install -qy --force-yes curl sudo && \
     echo "deb http://shell.ninthgate.se/packages/debian plexpass main" > /etc/apt/sources.list.d/plexmediaserver.list && \
-    curl http://shell.ninthgate.se/packages/shell.nintghate.se.gpg.key | apt-key add - && \
+    curl http://shell.ninthgate.se/packages/shell.ninthgate.se.gpg.key | apt-key add - && \
     apt-get -q update && \
     apt-get -qy --force-yes dist-upgrade && \
     apt-get install -qy --force-yes supervisor ca-certificates procps && \
