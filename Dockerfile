@@ -1,32 +1,33 @@
-FROM debian:wheezy
-MAINTAINER Tim Haak <tim@haak.co.uk>
-#Thanks to https://github.com/bydavy/docker-plex/blob/master/Dockerfile and https://github.com/aostanin/docker-plex/blob/master/Dockerfile
+FROM phusion/baseimage:0.9.21
+MAINTAINER Animazing
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV LANG en_US.UTF-8
 ENV LC_ALL C.UTF-8
 ENV LANGUAGE en_US.UTF-8
+ENV TERM xterm
 
 RUN apt-get -q update && \
-    apt-get install -qy --force-yes curl sudo && \
-    echo "deb http://shell.ninthgate.se/packages/debian wheezy main" > /etc/apt/sources.list.d/plexmediaserver.list && \
-    curl http://shell.ninthgate.se/packages/shell-ninthgate-se-keyring.key | apt-key add - && \
+    apt-get install -qy curl wget ca-certificates procps && \
+    echo "deb  https://downloads.plex.tv/repo/deb/ public main" > /etc/apt/sources.list.d/plexmediaserver.list && \
+    wget -q https://downloads.plex.tv/plex-keys/PlexSign.key -O - | apt-key add - && \
     apt-get -q update && \
-    apt-get -qy --force-yes dist-upgrade && \
-    apt-get install -qy --force-yes supervisor ca-certificates procps && \
-    apt-get install -qy --force-yes plexmediaserver && \
-    apt-get clean && \
+    apt-get install -qyo Dpkg::Options::='--force-confold' plexmediaserver
+
+RUN apt-get install -y dbus avahi-daemon
+RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /tmp/*
+RUN mkdir /etc/service/plex
+COPY run /etc/service/plex/run
+RUN chmod +x /etc/service/plex/run
+RUN echo /config > /etc/container_environment/HOME
 
 VOLUME /config
 VOLUME /data
 
-ADD ./start.sh /start.sh
-RUN chmod u+x  /start.sh
-
-ADD ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
+ENV HOME /config
 EXPOSE 32400
 
-CMD ["/start.sh"]
+CMD ["/sbin/my_init"]
+

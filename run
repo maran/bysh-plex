@@ -1,0 +1,21 @@
+#! /bin/sh
+export HOME=/config
+useradd -u $USERID $USERNAME --home-dir /config --no-create-home
+
+mkdir -p /config/logs/supervisor
+
+rm -rf /var/run/*
+rm -f "/config/Library/Application Support/Plex Media Server/plexmediaserver.pid"
+
+mkdir -p /var/run/dbus
+
+chown $USERNAME /data /config
+chown messagebus:messagebus /var/run/dbus
+
+dbus-uuidgen --ensure
+dbus-daemon --system --fork
+sleep 1
+
+avahi-daemon -D
+sleep 1
+exec /sbin/setuser $USERNAME start_pms
